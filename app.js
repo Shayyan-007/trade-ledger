@@ -542,6 +542,7 @@ async function loadAll(){
 }
 async function startApp(session){
   S.uid=session.user.id;S.email=session.user.email||"";showApp(true);render(true);
+  if(window.__fromLink){toast("Email confirmed. You're signed in.");window.__fromLink=false}
   try{await loadAll();S.live=true;S.err=""}catch(e){S.err="Your journal couldn't be loaded. Check your connection and refresh."}
   render(true);
 }
@@ -551,29 +552,62 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 function authMsg(t,bad){const m=$("#authMsg");m.textContent=t;m.className="authmsg"+(bad?" bad":"");m.hidden=!t}
 function setMode(mode){
   const f=$("#authForm");f.dataset.mode=mode;
+  $("#authDone").hidden=true;
+  ["#authTitle","#authSubmit",".authlinks"].forEach(sel=>$(sel).hidden=false);
   $("#authTitle").textContent={signin:"Sign in",signup:"Create your account",reset:"Reset password",newpw:"Set a new password"}[mode];
+  const sub={signup:"Use the email you check. We'll send a link to confirm it.",reset:"Enter your email and we'll send you a link to choose a new password.",newpw:"Choose a new password for your account."}[mode];
+  $("#authSub").textContent=sub||"";$("#authSub").hidden=!sub;
   $("#authPwWrap").hidden=mode==="reset";$("#authEmailWrap").hidden=mode==="newpw";
   $("#authSubmit").textContent={signin:"Sign in",signup:"Create account",reset:"Email me a reset link",newpw:"Save new password"}[mode];
   $("#authPw").autocomplete=mode==="signin"?"current-password":"new-password";
   $("#toSignup").hidden=mode!=="signin"||!CFG.allowSignup;$("#toReset").hidden=mode!=="signin";$("#toSignin").hidden=mode==="signin"||mode==="newpw";
   authMsg("");
 }
+let doneKind="signup";
+function showDone(kind,email){
+  doneKind=kind;
+  ["#authTitle","#authSub","#authEmailWrap","#authPwWrap","#authSubmit",".authlinks"].forEach(sel=>$(sel).hidden=true);
+  authMsg("");$("#authDone").hidden=false;
+  const e=`<b>${esc(email)}</b>`;
+  if(kind==="signup"){
+    $("#doneTitle").textContent="Account created";
+    $("#doneText").innerHTML=`We sent a confirmation link to ${e}.`;
+    $("#doneSteps").innerHTML="<li>Open the email from Supabase (check spam if it isn't there in a minute).</li><li>Tap <b>Confirm your mail</b>. You'll land back here, signed in.</li><li>If you open the link on another device, come back and sign in here.</li>";
+  }else{
+    $("#doneTitle").textContent="Reset link sent";
+    $("#doneText").innerHTML=`If ${e} has an account, a reset link is on its way.`;
+    $("#doneSteps").innerHTML="<li>Open the email and tap the reset link.</li><li>You'll come back here to choose a new password.</li>";
+  }
+  $("#doneResend").hidden=false;$("#doneResend").disabled=false;$("#doneResend").textContent="Resend email";
+  $("#doneSignin").focus();
+}
 function bindAuth(){
   $("#toSignup").onclick=()=>setMode("signup");$("#toReset").onclick=()=>setMode("reset");$("#toSignin").onclick=()=>setMode("signin");
+  $("#doneSignin").onclick=()=>{setMode("signin");$("#authPw").value="";$("#authPw").focus()};
+  $("#doneResend").onclick=async()=>{
+    const btn=$("#doneResend"),email=$("#authEmail").value.trim();btn.disabled=true;btn.textContent="Sending…";
+    try{
+      const {error}=doneKind==="signup"
+        ?await S.db.auth.resend({type:"signup",email,options:{emailRedirectTo:location.origin+location.pathname}})
+        :await S.db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+      if(error)throw error;btn.textContent="Sent again";setTimeout(()=>{btn.disabled=false;btn.textContent="Resend email"},30000);
+    }catch(err){btn.disabled=false;btn.textContent=/rate|seconds/i.test(err.message||"")?"Wait a minute, then retry":"Couldn't send. Retry"}
+  };
   $("#authForm").onsubmit=async e=>{
-    e.preventDefault();const mode=e.target.dataset.mode,email=$("#authEmail").value.trim(),pw=$("#authPw").value;const btn=$("#authSubmit");btn.disabled=true;authMsg("");
+    e.preventDefault();const mode=e.target.dataset.mode,email=$("#authEmail").value.trim(),pw=$("#authPw").value;const btn=$("#authSubmit");const label=btn.textContent;btn.disabled=true;btn.textContent="Please wait…";authMsg("");
     try{
       if(mode==="signin"){const {error}=await S.db.auth.signInWithPassword({email,password:pw});if(error)throw error}
-      else if(mode==="signup"){if(pw.length<8)throw {message:"Use at least 8 characters for your password."};const {data,error}=await S.db.auth.signUp({email,password:pw,options:{emailRedirectTo:location.origin+location.pathname}});if(error)throw error;if(!data.session)authMsg("Check your inbox and confirm your email, then sign in.")}
-      else if(mode==="reset"){const {error}=await S.db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;authMsg("If that email has an account, a reset link is on its way.")}
-      else if(mode==="newpw"){if(pw.length<8)throw {message:"Use at least 8 characters for your password."};const {error}=await S.db.auth.updateUser({password:pw});if(error)throw error;authMsg("Password updated.");const {data}=await S.db.auth.getSession();if(data.session)startApp(data.session)}
-    }catch(err){authMsg(/invalid login/i.test(err.message||"")?"That email and password don't match.":(err.message||"Something went wrong. Try again."),true)}
-    finally{btn.disabled=false}
+      else if(mode==="signup"){if(pw.length<8)throw {message:"Use at least 8 characters for your password."};const {data,error}=await S.db.auth.signUp({email,password:pw,options:{emailRedirectTo:location.origin+location.pathname}});if(error)throw error;if(!data.session)showDone("signup",email)}
+      else if(mode==="reset"){const {error}=await S.db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;showDone("reset",email)}
+      else if(mode==="newpw"){if(pw.length<8)throw {message:"Use at least 8 characters for your password."};const {error}=await S.db.auth.updateUser({password:pw});if(error)throw error;const {data}=await S.db.auth.getSession();if(data.session)startApp(data.session)}
+    }catch(err){const m=err.message||"";authMsg(/invalid login/i.test(m)?"That email and password don't match.":/not confirmed/i.test(m)?"Confirm your email first: open the link we sent you, then sign in.":/already registered/i.test(m)?"That email already has an account. Sign in instead.":(m||"Something went wrong. Try again."),true)}
+    finally{btn.disabled=false;btn.textContent=label}
   };
 }
 (async()=>{
   bindAuth();setMode("signin");
   if(!CFG.url||!CFG.key||!window.supabase){showApp(false);authMsg("This app isn't connected to its database yet. Add the Supabase URL and key to config.js.",true);$("#authSubmit").disabled=true;return}
+  window.__fromLink=/access_token|type=(signup|magiclink)/.test(location.hash+location.search);
   S.db=window.supabase.createClient(CFG.url,CFG.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   S.db.auth.onAuthStateChange((ev,session)=>{
     if(ev==="PASSWORD_RECOVERY"){showApp(false);setMode("newpw");return}
