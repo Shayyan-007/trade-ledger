@@ -24,13 +24,6 @@ create policy "delete own entries" on public.entries for delete to authenticated
 revoke all on public.entries from anon;
 grant select, insert, update, delete on public.entries to authenticated;
 
--- Single-owner lock: refuse any new account after yours exists. Drop the trigger to allow sign-ups again.
-create or replace function public.block_new_signups()
-returns trigger language plpgsql security definer set search_path = '' as $$
-begin
-  raise exception 'Sign-ups are closed for this journal.';
-end;
-$$;
-revoke all on function public.block_new_signups() from public, anon, authenticated;
-drop trigger if exists block_new_signups on auth.users;
-create trigger block_new_signups before insert on auth.users for each row execute function public.block_new_signups();
+-- Optional single-owner lock (not applied: friends can sign up). To close sign-ups, run:
+--   create or replace function public.block_new_signups() returns trigger language plpgsql security definer set search_path = '' as $$ begin raise exception 'Sign-ups are closed for this journal.'; end; $$;
+--   create trigger block_new_signups before insert on auth.users for each row execute function public.block_new_signups();
