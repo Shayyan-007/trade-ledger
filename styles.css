@@ -299,3 +299,17 @@ svg.chart text.lbl{font-family:var(--f-body);font-size:11px;letter-spacing:.06em
 @media print{.fbfab,.fbbanner{display:none!important}}
 .panel{align-content:start}
 @media (max-width:700px){.updbar{flex-wrap:nowrap;gap:10px;padding:8px 8px 8px 12px;font-size:12px;width:calc(100% - 24px)}.updbar button{flex:none}}
+
+/* theme toggle */
+.themebtn{display:inline-grid;place-items:center;width:38px;height:38px;min-height:0;padding:0;border-radius:999px;flex:none;color:var(--ink)}
+.themebtn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.themebtn .i-sun{display:none}
+.themebtn[data-mode="dark"] .i-sun{display:block}
+.themebtn[data-mode="dark"] .i-moon{display:none}
+.top .themebtn{margin-left:auto}
+.top .acct-switch:not([hidden]){margin-left:auto}
+.top .acct-switch:not([hidden]) + .themebtn{margin-left:0}
+.auth{position:relative}
+.auth-theme{position:absolute;top:max(16px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px))}
+@media (prefers-reduced-motion:no-preference){body,.panel,.kpis,.top,nav.tabs{transition:background-color .2s ease,border-color .2s ease}}
+@media print{.themebtn,.auth-theme{display:none!important}}

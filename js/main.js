@@ -48,6 +48,7 @@ document.addEventListener("click",e=>{
       clearDrill:()=>{S.f.drill=null;renderApp(true)},
       pickAccount:()=>{setAccount(id)},
       refreshApp:()=>applyUpdate(),
+      toggleTheme:()=>toggleTheme(),
       feedback:()=>feedbackModal({onSent:loadFeedback}),
       hideFbBanner:()=>{try{localStorage.setItem("tl.fbBanner","off")}catch{}renderApp(true)}
     };
@@ -63,6 +64,23 @@ document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const el=e.tar
 function shiftMonth(n){const [y,m]=S.month.split("-").map(Number);S.month=ymd(new Date(y,m-1+n,1)).slice(0,7);renderApp(true)}
 function setAccount(id){S.f.account=id||"all";try{localStorage.setItem("tl.account",S.f.account)}catch{}if(id&&id!=="all"&&S.cfg.activeAccount!==id)write("config/main",{...S.cfg,activeAccount:id},{silent:true});renderApp(true)}
 $("#acctSwitch").addEventListener("change",e=>setAccount(e.target.value));
+
+/* ---------- light / dark theme ---------- */
+const darkMQ=matchMedia("(prefers-color-scheme: dark)");
+function effectiveTheme(){const t=document.documentElement.getAttribute("data-theme");return t==="light"||t==="dark"?t:(darkMQ.matches?"dark":"light")}
+function syncThemeUI(){
+  const dark=effectiveTheme()==="dark";
+  $$(".themebtn").forEach(b=>{b.setAttribute("aria-label",dark?"Switch to light mode":"Switch to dark mode");b.title=dark?"Light mode":"Dark mode";b.dataset.mode=dark?"dark":"light"});
+  $$('meta[name="theme-color"]').forEach(m=>{m.setAttribute("content",dark?"#16202A":"#FFFFFF");m.setAttribute("media","all")});
+}
+function toggleTheme(){
+  const next=effectiveTheme()==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  try{localStorage.setItem("tl.theme",next)}catch{}
+  syncThemeUI();
+}
+if(darkMQ.addEventListener)darkMQ.addEventListener("change",syncThemeUI);
+syncThemeUI();
 
 /* ---------- update notification ---------- */
 let loadedVersion=null,newVersion=null;
