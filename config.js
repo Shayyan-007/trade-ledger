@@ -3,5 +3,5 @@
 window.TL_CONFIG = {
   url: "https://ytyvdyqilnbhbvbrzuld.supabase.co",
   key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0eXZkeXFpbG5iaGJ2YnJ6dWxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMTgzNjMsImV4cCI6MjEwOTY5NDM2M30.SRfhGsJOD2H_gP3cuKNEWCNC_WKFTlzRsqEx1P8HDOM",
-  allowSignup: true // set to false once your account exists
+  allowSignup: false // sign-ups are also blocked in the database (block_new_signups trigger)
 };
