@@ -1,0 +1,116 @@
+{
+  "verified": "2026-11-08",
+  "recheckDays": 45,
+  "note": "Rules change often. Each program lists its source; confirm on the firm's site before trading. Percentages are of the initial account balance unless noted.",
+  "firms": [
+    {
+      "id": "fundingpips", "name": "FundingPips", "market": "Forex / CFD",
+      "programs": [
+        {
+          "id": "fp-2step-standard", "name": "2-Step Standard",
+          "source": "https://help.fundingpips.com/hc/en-us/articles/34501809112081-2-Step-Standard",
+          "sizes": [5000, 10000, 25000, 50000, 100000],
+          "phases": [
+            {"type": "challenge-1", "profitTargetPct": 8, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 3},
+            {"type": "challenge-2", "profitTargetPct": 5, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 3},
+            {"type": "funded", "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "consistencyPct": 35}
+          ],
+          "notes": "Daily loss uses the higher of day-start balance or equity. Phase 1 10% option discontinued July 2026. 35% consistency score applies only on the On Demand reward cycle."
+        },
+        {
+          "id": "fp-2step-pro", "name": "2-Step Pro",
+          "source": "https://help.fundingpips.com/",
+          "phases": [
+            {"type": "challenge-1", "profitTargetPct": 6, "maxDailyLossPct": 3, "maxTotalLossPct": 6, "ddType": "static", "minDays": 0},
+            {"type": "challenge-2", "profitTargetPct": 6, "maxDailyLossPct": 3, "maxTotalLossPct": 6, "ddType": "static", "minDays": 0},
+            {"type": "funded", "maxDailyLossPct": 3, "maxTotalLossPct": 6, "ddType": "static"}
+          ],
+          "notes": "Sources disagree on minimum days (none for accounts bought from 26 Aug 2026, 1 per phase before). Confirm on the firm's site."
+        }
+      ]
+    },
+    {
+      "id": "ftmo", "name": "FTMO", "market": "Forex / CFD",
+      "programs": [
+        {
+          "id": "ftmo-2step", "name": "2-Step Challenge",
+          "source": "https://ftmo.com/en/trading-objectives/",
+          "sizes": [10000, 25000, 50000, 100000, 200000],
+          "phases": [
+            {"type": "challenge-1", "profitTargetPct": 10, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 4},
+            {"type": "challenge-2", "profitTargetPct": 5, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 4},
+            {"type": "funded", "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static"}
+          ],
+          "notes": "Daily loss resets at midnight CE(S)T and includes floating losses. Sources disagree on whether the old 30/60-day time limits still apply."
+        },
+        {
+          "id": "ftmo-1step", "name": "1-Step Challenge",
+          "source": "https://ftmo.com/en/trading-objectives/",
+          "phases": [
+            {"type": "challenge-1", "profitTargetPct": 10, "maxDailyLossPct": 3, "maxTotalLossPct": 10, "ddType": "trailing", "minDays": 0, "consistencyPct": 50},
+            {"type": "funded", "maxDailyLossPct": 3, "maxTotalLossPct": 10, "ddType": "trailing"}
+          ],
+          "notes": "Trailing max loss and 50% best-day consistency rule per third-party guides. Confirm on the firm's site."
+        }
+      ]
+    },
+    {
+      "id": "the5ers", "name": "The5%ers", "market": "Forex / CFD",
+      "programs": [
+        {
+          "id": "t5-highstakes", "name": "High Stakes (New)",
+          "source": "https://the5ers.com/challenge-programs-bootcamp-high-stakes-hyper-growth-explained/",
+          "phases": [
+            {"type": "challenge-1", "profitTargetPct": 10, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 3},
+            {"type": "challenge-2", "profitTargetPct": 5, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 3},
+            {"type": "funded", "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static"}
+          ],
+          "notes": "Minimum days are profitable days (closed profit of at least 0.5% of initial balance). Some sources list 4% daily / 8% max on $50K and $100K. Classic variant targets 8% then 5%."
+        }
+      ]
+    },
+    {
+      "id": "fundednext", "name": "FundedNext", "market": "Forex / CFD",
+      "programs": [
+        {
+          "id": "fn-stellar-2step", "name": "Stellar 2-Step",
+          "source": "https://help.fundednext.com/en/articles/17255124-stellar-2-step-challenge",
+          "phases": [
+            {"type": "challenge-1", "profitTargetPct": 8, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 5},
+            {"type": "challenge-2", "profitTargetPct": 5, "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static", "minDays": 5},
+            {"type": "funded", "maxDailyLossPct": 5, "maxTotalLossPct": 10, "ddType": "static"}
+          ],
+          "notes": "No time limit. Daily loss resets at midnight server time and grows with same-day realized profit. Help center states 80% reward share."
+        }
+      ]
+    },
+    {
+      "id": "topstep", "name": "Topstep", "market": "Futures",
+      "programs": [
+        {
+          "id": "ts-combine-50k", "name": "Trading Combine 50K",
+          "source": "https://help.topstep.com/en/articles/8284099-topstep-program-overview",
+          "sizes": [50000],
+          "phases": [
+            {"type": "challenge-1", "profitTargetAmt": 3000, "maxTotalLossAmt": 2000, "ddType": "eod-trailing", "maxDailyLossAmt": 1000, "minDays": 0, "consistencyPct": 55}
+          ],
+          "notes": "Max Loss Limit trails end-of-day highs. Daily loss limit is optional. If the best day exceeds 55% of profits, the target rises instead of failing. 5 minis max. Flat by 3:10 PM CT."
+        }
+      ]
+    },
+    {
+      "id": "apex", "name": "Apex Trader Funding", "market": "Futures",
+      "programs": [
+        {
+          "id": "apex-eval-50k-eod", "name": "Evaluation 50K (EOD)",
+          "source": "https://apextraderfunding.com/help-center/",
+          "sizes": [50000],
+          "phases": [
+            {"type": "challenge-1", "profitTargetAmt": 3000, "maxTotalLossAmt": 2000, "ddType": "eod-trailing", "maxDailyLossAmt": 1000, "minDays": 0, "timeLimitDays": 30}
+          ],
+          "notes": "Intraday-trailing variant has no daily loss limit and trails open P&L. Some sources list a $2,500 drawdown (legacy rules)."
+        }
+      ]
+    }
+  ]
+}

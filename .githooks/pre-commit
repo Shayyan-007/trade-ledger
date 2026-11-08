@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stamp a new version on every commit so open apps show the "new version ready" banner after a push.
+printf '{"v":"%s"}\n' "$(date -u +%Y%m%d%H%M%S)" > version.json
+git add version.json
